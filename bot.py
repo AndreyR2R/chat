@@ -90,65 +90,12 @@ class Bot(WSClient, Global):
         'generate',
         'online_status',
         'device_id',
-        '_is_authenticated',
+        '_is_authenticated'
         'request',
         'community',
         'account',
-        'profile'
+        'profile',
     )
-    
-    # Métodos existentes
-    
-    def send_mass_message(self, community_id: str, user_ids: List[str], message: str):
-        """
-        Envia uma mensagem em massa para uma lista de usuários em uma comunidade específica.
-        """
-        url = f"https://service.narvii.com/api/v1/x{community_id}/s/chat/thread/create"
-
-        data = {
-            "inviteeUids": user_ids,
-            "initialMessageContent": message,
-            "title": "Convite",
-            "content": message,
-            "type": 0
-        }
-
-        try:
-            response = self.make_request(url=url, data=data, method="POST")
-            return response
-        except Exception as e:
-            print(f"Erro ao enviar mensagem em massa: {str(e)}")
-            raise
-
-    def get_community_id_from_code(self, code: str):
-        """
-        Obtém o ID da comunidade a partir do código fornecido.
-        """
-        url = "/g/s/link-resolution"
-        data = {
-            "q": code
-        }
-
-        try:
-            response = self.make_request(
-                url=url,
-                data=data,
-                method="POST"
-            )
-            
-            if 'linkInfoV2' in response and 'extensions' in response['linkInfoV2'] and 'community' in response['linkInfoV2']['extensions']:
-                community_id = response['linkInfoV2']['extensions']['community'].get('ndcId')
-                if community_id:
-                    return community_id
-                else:
-                    raise ValueError("Não foi possível encontrar o communityId a partir do código fornecido.")
-            else:
-                raise ValueError("Resposta da API não contém informações de comunidade.")
-        except Exception as e:
-            # Imprimir a exceção para depuração
-            print(f"Erro ao obter communityId: {str(e)}")
-            raise
-    
     def __init__(
         self,
         command_prefix: Optional[str] = "!",
@@ -1068,7 +1015,7 @@ class Bot(WSClient, Global):
             self.set_community_id(community_id)
 
         return community_id
-    
+
     def set_community_id(self, community_id: Union[str, int]) -> int:
         """
         Sets the community ID on the client instance and the Community object.
